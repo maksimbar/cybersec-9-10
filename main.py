@@ -450,3 +450,19 @@ print("AES-EBC atviras tekstas:", plaintext_ecb)
 print("AES-CBC atviras tekstas:", plaintext_cbc)
 print("AES-CFB atviras tekstas:", plaintext_cfb)
 print("AES-OFB atviras tekstas:", plaintext_ofb)
+
+def decrypt_pcbc(ciphertext_blocks, round_keys, iv_block):
+    decrypted_blocks = []
+    previous_ciphertext_block = iv_block
+
+    for block in ciphertext_blocks:
+        decrypted_block = aes_decrypt_block(block, round_keys)
+        decrypted_block = [[decrypted_block[i][j] ^ previous_ciphertext_block[i][j] for j in range(4)] for i in range(4)]
+        decrypted_blocks.append(decrypted_block)
+        previous_ciphertext_block = [[decrypted_block[i][j] ^ block[i][j] for j in range(4)] for i in range(4)]
+
+    return blocks_to_string(decrypted_blocks)
+
+plaintext_pcbc = decrypt_pcbc(ciphertext_blocks_list[2], round_keys, iv_block)
+
+print("AES-PCBC atviras tekstas:", plaintext_pcbc)
